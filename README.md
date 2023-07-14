@@ -2,7 +2,7 @@
 
 ### Architecture
 The system contains 2 major branches - server and cron processor. HTTP server handles incoming notifications and store them inside a common table in DB. Cron processor runs asyncronously and notify third-party services (currently slack, sms and email).
-![Alt text](image.png)
+![Alt text](arch.png)
 ##### Pros:
 - notifications are stored in database after processed, so we can have history
 - independent notifications processing
