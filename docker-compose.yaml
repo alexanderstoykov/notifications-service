@@ -1,0 +1,94 @@
+version: "3.7"
+
+services:
+  server:
+    image: notifications-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - local
+    env_file:
+      - .env
+    command:
+      - "/server"
+
+  cron-slack:
+    image: notifications-service
+    depends_on:
+      - postgres
+    networks:
+      - local
+    env_file:
+      - .env
+    command:
+      - "./cron"
+      - "-type=slack"
+
+  cron-email:
+    image: notifications-service
+    depends_on:
+      - postgres
+    networks:
+      - local
+    env_file:
+      - .env
+    command:
+      - "./cron"
+      - "-type=email"
+
+  cron-sms:
+    image: notifications-service
+    depends_on:
+      - postgres
+    networks:
+      - local
+    env_file:
+      - .env
+    command:
+      - "./cron"
+      - "-type=sms"
+
+  postgres:
+    image: postgres:14.1
+    command: postgres -c shared_preload_libraries=pg_stat_statements -c pg_stat_statements.track=all -c max_connections=200
+    volumes:
+      - ./docker/postgres:/docker-entrypoint-initdb.d
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - local
+    ports:
+      - "5432:5432"
+    container_name: notifications-service-db
+    environment:
+      POSTGRES_MULTIPLE_DATABASES: ${DATABASE_LIST}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+
+  postgres-test:
+    image: postgres:14.1
+    command: postgres -c shared_preload_libraries=pg_stat_statements -c pg_stat_statements.track=all -c max_connections=200
+    volumes:
+      - ./docker/postgres:/docker-entrypoint-initdb.d
+      - postgres_data_test:/var/lib/postgresql/data
+    networks:
+      - local
+    ports:
+      - "5433:5432"
+    container_name: notifications-service-test-db
+    environment:
+      POSTGRES_MULTIPLE_DATABASES: ${DATABASE_LIST}
+      POSTGRES_USER: ${DATABASE_USER}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD}
+
+
+volumes:
+  postgres_data:
+    driver: local
+  postgres_data_test:
+    driver: local
+
+networks:
+  local:
+    driver: bridge
