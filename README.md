@@ -1,7 +1,8 @@
 # Notifications service
+
 ### Architecture
 The system contains 2 major branches - server and cron processor. HTTP server handles incoming notifications and store them inside a common table in DB. Cron processor runs asyncronously and notify third-party services (currently slack, sms and email).
-![Alt text](arch.png)
+![Alt text](image.png)
 ##### Pros:
 - notifications are stored in database after processed, so we can have history
 - independent notifications processing
@@ -24,6 +25,20 @@ The system contains 2 major branches - server and cron processor. HTTP server ha
 - DB migrations for better handling DB schema changes
 - Idempotency of incoming notifications can be implemented, so we avoid duplicates
 
+### Endpoints and usage
+Here are the exposed endpoints
+```
+POST   /slack
+POST   /sms
+POST   /email
+```
+An example request payload would be:
+```
+{
+  "message": "a message",
+  "receiver": "a receiver"
+}
+```
 ### Setup
 Prerequisites:  ``docker`` & ``docker-compose``
 
