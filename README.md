@@ -13,7 +13,6 @@ The system contains 2 major branches - server and cron processor. HTTP server ha
 ##### Cons:
 - system is dependant of database and its capabilities
 - no order of delivered messages is guaranteed
-- in case of multiple processors the system can notify third party service more than once for the same notification
 
 ### Improvements
 - usage of message broker and using an outbox pattern
